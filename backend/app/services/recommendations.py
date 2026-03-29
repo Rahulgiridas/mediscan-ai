@@ -1,8 +1,14 @@
-def generate_recommendations(summary):
-    recs = []
+from app.utils.constants import RECOMMENDATIONS_MAP
 
-    if "Possible Anemia" in summary["risks"]:
-        recs.append("Increase iron-rich foods")
-        recs.append("Consult a doctor")
 
-    return recs
+def generate_recommendations(summary: dict):
+    recommendations = set()
+
+    risks = summary.get("risks", [])
+
+    for risk in risks:
+        if risk in RECOMMENDATIONS_MAP:
+            for rec in RECOMMENDATIONS_MAP[risk]:
+                recommendations.add(rec)
+
+    return list(recommendations)
