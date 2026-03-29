@@ -1,4 +1,5 @@
-from fastapi import APIRouter, UploadFile, File
+from fastapi import APIRouter, UploadFile, File, HTTPException
+from typing import Optional
 from app.services.ocr import extract_text
 from app.services.parser import parse_report
 from app.services.model1_interpreter import interpret_parameters
@@ -15,7 +16,7 @@ async def analyze_report(file: UploadFile = File(...)):
     contents = await file.read()
 
 upload.py, line 17
-text = extract_text(contents)from fastapi import APIRouter...
+text = extract_text(contents)from fastapi import APIRouter, UploadFile, File, HTTPException
 from typing import Optional
 
 from app.services.ocr import extract_text
