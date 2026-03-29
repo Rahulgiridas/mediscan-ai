@@ -1,10 +1,15 @@
-def assess_risk(data):
+from app.utils.constants import RISK_RULES
+
+
+def assess_risk(data: dict):
     risks = []
 
-    if data.get("hemoglobin", 15) < 12:
-        risks.append("Possible Anemia")
-
-    if data.get("platelets", 200000) < 150000:
-        risks.append("Low Platelet Risk")
+    for rule_name, rule in RISK_RULES.items():
+        try:
+            if rule["condition"](data):
+                risks.append(rule["message"])
+        except Exception:
+            # Fail-safe: skip broken rule
+            continue
 
     return risks
