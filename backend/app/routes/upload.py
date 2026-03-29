@@ -14,7 +14,8 @@ router = APIRouter()
 async def analyze_report(file: UploadFile = File(...)):
     contents = await file.read()
 
-    text = extract_text(contents)from fastapi import APIRouter, UploadFile, File, HTTPException
+upload.py, line 17
+text = extract_text(contents)from fastapi import APIRouter...
 from typing import Optional
 
 from app.services.ocr import extract_text
