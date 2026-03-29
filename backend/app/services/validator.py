@@ -1,20 +1,20 @@
-def validate_and_standardize(data):
+from app.utils.constants import REALISTIC_LIMITS
+
+
+def validate_and_standardize(data: dict):
     cleaned = {}
     errors = []
 
-    # Standard reference ranges (can move to constants.py later)
-    ranges = {
-        "hemoglobin": (5, 25),      # g/dL realistic bounds
-        "rbc": (1, 10),             # million cells
-        "wbc": (1000, 20000),       # cells
-        "platelets": (10000, 1000000)
-    }
-
     for key, value in data.items():
 
-        # ❌ Missing or invalid
+        # ❌ Missing value
         if value is None:
             errors.append(f"{key} missing")
+            continue
+
+        # ❌ Invalid type
+        if not isinstance(value, (int, float)):
+            errors.append(f"{key} invalid type")
             continue
 
         # ❌ Negative values
@@ -22,15 +22,15 @@ def validate_and_standardize(data):
             errors.append(f"{key} has negative value")
             continue
 
-        # ⚠️ Out-of-range (possible OCR error)
-        if key in ranges:
-            low, high = ranges[key]
+        # ⚠️ Out-of-range check
+        if key in REALISTIC_LIMITS:
+            low, high = REALISTIC_LIMITS[key]
             if not (low <= value <= high):
                 errors.append(f"{key} out of realistic range ({value})")
 
-        # ✅ Normalize (example: platelets in lakhs → convert)
+        # 🔄 Unit normalization
         if key == "platelets" and value < 1000:
-            value = value * 1000  # convert to standard unit
+            value = value * 1000  # convert to standard count
 
         cleaned[key] = value
 
