@@ -1,7 +1,7 @@
 from fastapi import APIRouter, UploadFile, File, HTTPException
 from typing import Optional
 
-# 🔧 Import services
+# 🔧 Services
 from app.services.ocr import extract_text
 from app.services.parser import parse_report
 from app.services.validator import validate_and_standardize
@@ -11,7 +11,7 @@ from app.services.model3_context import contextual_analysis
 from app.services.synthesizer import synthesize
 from app.services.recommendations import generate_recommendations
 
-# 🚀 Router setup
+# 🚀 Router
 router = APIRouter(prefix="/api", tags=["Analysis"])
 
 
@@ -22,43 +22,43 @@ async def analyze_report(
     gender: Optional[str] = None
 ):
     try:
-        # 📥 Step 1 — Read uploaded file
+        # 📥 Read file
         contents = await file.read()
 
         if not contents:
             raise HTTPException(status_code=400, detail="Empty file uploaded")
 
-        # 🔍 Step 2 — OCR Extraction
+        # 🔍 OCR
         text = extract_text(contents)
 
         if not text or len(text.strip()) == 0:
             raise HTTPException(status_code=400, detail="Could not extract text from report")
 
-        # 🧾 Step 3 — Parse Report
+        # 🧾 Parse
         structured_data = parse_report(text)
 
         if not structured_data:
             raise HTTPException(status_code=400, detail="Failed to parse report data")
 
-        # 🧪 Step 4 — Validation & Standardization
+        # 🧪 Validate
         validated_data, validation_errors = validate_and_standardize(structured_data)
 
-        # 🧠 Step 5 — Model 1 (Parameter Interpretation)
+        # 🧠 Model 1
         model1_results = interpret_parameters(validated_data, gender=gender or "male")
 
-        # ⚠️ Step 6 — Model 2 (Risk Assessment)
+        # ⚠️ Model 2
         model2_results = assess_risk(validated_data)
 
-        # 🧠 Step 7 — Model 3 (Contextual Analysis)
+        # 🧠 Model 3
         model3_results = contextual_analysis(validated_data, age=age, gender=gender)
 
-        # 🧩 Step 8 — Synthesis
+        # 🧩 Combine
         summary = synthesize(model1_results, model2_results, model3_results)
 
-        # 💡 Step 9 — Recommendations
+        # 💡 Recommendations
         recommendations = generate_recommendations(summary)
 
-        # ✅ Final Response
+        # ✅ Response
         return {
             "status": "success",
             "filename": file.filename,
